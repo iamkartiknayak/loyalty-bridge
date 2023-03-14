@@ -1,0 +1,169 @@
+<?php 
+
+    session_start(); 
+
+    if(!isset($_SESSION['business_name']) or !isset($_SESSION['client_name'])){
+        header("Location: login_register.html");
+    }
+
+?>
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Dashboard</title>
+
+    <link rel="stylesheet" href="./style/admin_dashboard.css">
+    <link rel="stylesheet" href="https://unicons.iconscout.com/release/v4.0.0/css/line.css">
+</head>
+
+<body>
+    <nav>
+        <div class="company-details">
+            <div class="logo-image">
+                <img src="./img/client_default_logo.png" alt="Icon">
+            </div>
+
+            <div class="company-info">
+                <span class="company-name">
+                    <?php echo $_SESSION['business_name']?>
+                </span>
+                <span class="client-name">
+                    <?php echo $_SESSION['client_name']?>
+                </span>
+            </div>
+
+        </div>
+
+        <div class="menu-items">
+            <ul class="nav-links">
+                <li class="active"><a href="#dashboard" id="dashboardPage">
+                        <i class="uil uil-estate"></i>
+                        <span class="link-name">Dashboard</span>
+                    </a>
+                </li>
+            </ul>
+
+            <ul class="logout-mode">
+                <li><a href="./backend/logout.php">
+                        <i class="uil uil-signout"></i>
+                        <span class="link-name">Logout</span>
+                    </a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <section class="dashboard" id="dashboard">
+        <div class="top">
+            <i class="uil uil-bars sidebar-toggle"></i>
+        </div>
+
+        <h1 class="heading">Dashboard</h1>
+
+        <div class="dash-content">
+            <div class="overview">
+                <div class="boxes">
+                    <div class="box box1">
+                        <i class="uil uil-transaction"></i>
+                        <span class="text">Net Transaction Amount</span>
+                        <div class="card-display-style">
+                            <i class="uil uil-rupee-sign"></i>
+                            <span class="number total-transaction-amount">
+                                <?php echo  $_SESSION['net_transaction_amount'] ?>
+                            </span>
+                        </div>
+
+                    </div>
+                    <div class="box box2">
+                        <i class="uil uil-users-alt"></i>
+                        <span class="text">Total Clients</span>
+                        <span class="number customer-count">
+                            <?php echo $_SESSION['clients_count'] ?>
+                        </span>
+                    </div>
+                    <div class="box box3">
+                        <i class="uil uil-gift"></i>
+                        <span class="text">Net Redemption Amount</span>
+                        <div class="card-display-style">
+                            <i class="uil uil-rupee-sign"></i>
+                            <span class="number total-redemption-amount">
+                                <?php echo $_SESSION['net_redemption_amount'] ?>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="controls">
+                <iframe name="myFrame" src="./backend/add_transaction.php" frameborder="0"></iframe>
+                <form action="./backend/add_transaction.php" method="post" class="sub-controls-one" target="myFrame">
+                    <div class="solid-input-box">
+                        <i class="uil uil-search"></i>
+                        <input type="text" class="solid-input-box customer-phone-number" name="customer_phone_number"
+                            id="clientNumber" name="customer_phone_number" onkeyup="getNumberInfo()" minlength="10"
+                            maxlength="10" placeholder="Search Clients by Phone or Business" required>
+                    </div>
+                </form>
+
+                <div class="sub-controls-two">
+                    <div class="categorySort">
+                        <div class="selector">
+                            <div id="selectCategory">
+                                <i class="uil uil-calendar-alt" id="categoryIcon"></i>
+                                <p id="sortCategory">Date</p>
+                                <i class="uil uil-angle-down"></i>
+                            </div>
+                            <ul class="categoryList">
+                                <li class="categoryOptions">
+                                    <i class="uil uil-calendar-alt"></i>
+                                    <p>Date</p>
+                                </li>
+                                <li class="categoryOptions">
+                                    <i class="uil uil-rupee-sign"></i>
+                                    <p>Amount</p>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="typeSort">
+                        <div class="selector">
+                            <div id="selectType">
+                                <i class="uil uil-sort-amount-down" id="typeIcon"></i>
+                                <p id="sortType">Descending</p>
+                                <i class="uil uil-angle-down"></i>
+                            </div>
+                            <ul class="typeList">
+                                <li class="typeOptions">
+                                    <i class="uil uil-sort-amount-up"></i>
+                                    <p>Ascending</p>
+                                </li>
+                                <li class="typeOptions">
+                                    <i class="uil uil-sort-amount-down"></i>
+                                    <p>Descending</p>
+
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <iframe name="myFrame2" src="./backend/update_account_status.php" frameborder="0"></iframe>
+
+            <div class="activity">
+                <div class="activity-data">
+                    <div id="clientTable"></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <span id="snackbar"></span>
+    <script src="./script/admin_dashboard.js"></script>
+</body>
+
+</html>

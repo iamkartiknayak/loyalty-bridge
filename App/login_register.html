@@ -1,0 +1,326 @@
+<?php 
+
+  session_start();
+
+  if(!isset($_SESSION['login_status'])){
+    $_SESSION['login_status'] = "";
+    $_SESSION['login_error_message'] = "";
+  }
+
+  if(!isset($_SESSION['register_status'])){
+    $_SESSION['register_status'] = "";
+    $_SESSION['register_error_message'] = "";
+  }
+
+  if(!isset($_SESSION['register_error_message'])){
+    $_SESSION['register_error_message'] = "";
+  }
+
+  // Form input elements
+  if(!isset($_SESSION['register_client_name'])){
+    $_SESSION['register_client_name'] = "";
+  }
+
+  if(!isset($_SESSION['register_client_business_name'])){
+    $_SESSION['register_client_business_name'] = "";
+  }
+
+  if(!isset($_SESSION['register_client_pincode'])){
+    $_SESSION['register_client_pincode'] = "";
+  }
+
+  if(!isset($_SESSION['register_client_email'])){
+    $_SESSION['register_client_email'] = "";
+  }
+
+  if(!isset($_SESSION['register_client_number'])){
+    $_SESSION['register_client_number'] = "";
+  }
+
+  if(!isset($_SESSION['reset_status'])){
+    $_SESSION['reset_status'] = "";
+    $_SESSION['reset_error_message'] = "";
+  }
+
+?>
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sign in & Sign up Form</title>
+
+  <link rel="stylesheet" href="./style/login_register.css" />
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <link rel="stylesheet" href="https://unicons.iconscout.com/release/v4.0.0/css/line.css">
+
+</head>
+
+<body>
+  <main>
+    <div class="box">
+      <div class="toast">Client Registered Successfully!</div>
+      <div class="inner-box">
+        <div class="forms-wrap">
+          <form action="./backend/login_client.php" method="post" class="sign-in-form">
+            <div class="logo">
+              <img src="./img/company_logo.png" alt="LMS" />
+              <h4>LMS</h4>
+            </div>
+
+            <div class="heading">
+              <h2>Welcome Back</h2>
+              <h6>Not registered yet?</h6>
+              <a href="#" class="toggle" data-btn-type="sign-up-mode" id="signUpPage">Sign up</a>
+              <span class="login-error-message">
+                <?php echo $_SESSION['login_error_message'];?>
+              </span>
+            </div>
+
+            <div class="actual-form">
+              <div class="login-input-wrap">
+                <input type="text" name="client_ID" minlength="4" class="input-field" id="clientID" autocomplete="off" onkeypress="return event.charCode != 32"
+                  required />
+                <label>Email or Phone</label>
+              </div>
+
+              <div class="login-input-wrap">
+                <input type="password" name="client_password" class="input-field input-password"
+                  id="clientLoginPassword" onkeyup="return isPasswordFieldEmpty(this.id, 'togglePasswordLogin')"
+                  autocomplete="off" minlength="8" maxlength="14" required />
+                <label>Password</label>
+                <i class="uil uil-eye-slash" id="togglePasswordLogin" hidden="true" onclick="showPassword(this.id)"></i>
+              </div>
+
+              <input type="submit" value="Sign In" class="sign-btn" />
+              <p class="text">
+                Forgotten your password or you login details?
+                <a href="#" data-btn-type="forgot-password-mode" class="toggle" id="resetPage">Get help</a> signing in
+              </p>
+            </div>
+          </form>
+
+          <form action="./backend/register_client.php" method="post" autocomplete="off" class="sign-up-form"
+            data-btn-type="sign-in-mode">
+            <div class="logo">
+              <img src="./img/company_logo.png" alt="LMS" />
+              <h4>LMS</h4>
+            </div>
+
+            <div class="heading">
+              <h2>Get Started</h2>
+              <h6>Already have an account?</h6>
+              <a href="#" class="toggle" id="logInPage">Sign in</a>
+              <span class="register-error-message">
+                <?php echo $_SESSION['register_error_message'];?>
+              </span>
+            </div>
+
+            <div class="actual-form">
+              <div class="signup-input-wrap">
+                <input type="text" name="client_name" class="input-field" id="clientName" minlength="4" maxlength="30"
+                  autocomplete="off" value="<?php echo $_SESSION['register_client_name']; ?>" required />
+                <label>Name</label>
+              </div>
+
+              <div class="signup-input-wrap">
+                <input type="email" name="client_email" class="input-field" id="clientEmailID"
+                  oninput="clientDataExist(this.id, 'check-email')" onkeypress="return event.charCode != 32" maxlength="30" autocomplete="off"
+                  value="<?php echo $_SESSION['register_client_email']; ?>" required />
+                <label>Email</label>
+                <i class="uil uil-exclamation-circle red-error-icon" id="emailExistErrorIcon"></i>
+                <span class="error-tooltip" id="emailExistErrorLabel">This Email ID is already registered</span>
+                <span id="check-email"></span>  
+              </div>
+
+
+              <div class="signup-input-wrap">
+                <input type="password" name="client_password" class="input-field input-password"
+                  id="clientRegisterPassword" onkeyup="return checkPasswordStrength(this.id, 'togglePasswordRegister')"
+                  autocomplete="off" minlength="8" maxlength="14" required />
+                <label>Password</label>
+                <i class="uil uil-eye-slash" id="togglePasswordRegister" hidden="true"
+                  onclick="showPassword(this.id)"></i>
+                <span id="passwordStrengthLabel" class="password-strength-label"></span>
+              </div>
+
+              <div class="signup-input-wrap">
+                <input type="password" class="input-field input-password" id="confirmClientRegisterPassword"
+                  onkeyup="return confirmEnteredPassword()" autocomplete="off" minlength="8" maxlength="14" required />
+                <label>Confirm Password</label>
+                <i class="uil uil-exclamation-circle red-error-icon" id="confirmPasswordErrorIcon"></i>
+                <span class="error-tooltip" id="confirmPasswordErrorLabel">Password didn't match</span>
+              </div>
+
+              <div class="signup-input-wrap">
+                <input type="tel" name="client_phone_number" class="input-field num-field" id="clientPhoneNumber"
+                  oninput="clientDataExist(this.id, 'check-number')" onkeypress="return onlyNumberKey(event)"
+                  minlength="10" maxlength="10" autocomplete="off"
+                  value="<?php echo $_SESSION['register_client_number']; ?>" required />
+                <label>Phone</label>
+                <i class="uil uil-exclamation-circle red-error-icon" id="numberExistErrorIcon"></i>
+                <span class="error-tooltip" id="numberExistErrorLabel">This Number is already registered</span>
+              </div>
+
+              <span id="check-number"></span>
+
+              <div class="signup-input-wrap">
+                <input type="text" name="client_business_name" class="input-field" maxlength="30" autocomplete="off"
+                  value="<?php echo $_SESSION['register_client_business_name']; ?>" required />
+                <label>Business Name</label>
+              </div>
+
+              <div class="signup-input-wrap">
+                <input type="text" name="client_pincode" class="input-field number-field num-field"
+                  onkeypress="return onlyNumberKey(event)" minlength="6" maxlength="6" autocomplete="off"
+                  value="<?php echo $_SESSION['register_client_pincode']; ?>" required />
+                <label>Pincode</label>
+              </div>
+
+
+              <input type="submit" value="Sign Up" class="sign-btn" id="registerButton" />
+
+              <p class="text">
+                By signing up, I agree to the
+                <a href="#">Terms of Services</a> and
+                <a href="#">Privacy Policy</a>
+              </p>
+            </div>
+          </form>
+
+
+          <form action="./backend/reset_password.php" method="post" autocomplete="off" class="forgot-password-form">
+            <div class="logo">
+              <img src="./img/company_logo.png" alt="LMS" />
+              <h4>LMS</h4>
+            </div>
+
+            <div class="heading">
+              <h2>Forgot password</h2>
+              <h6>Not registered yet?</h6>
+              <a href="#" class="toggle" data-btn-type="sign-in-mode">Back to sign in</a>
+              <br><br>
+              <h3>Verify your details</h3>
+              <span class="reset-error-message">
+                <?php echo $_SESSION['reset_error_message'];?>
+              </span>
+            </div>
+
+            <div class="actual-form">
+              <div class="login-input-wrap">
+                <input type="email" name="client_reset_email" class="input-field" id="resetEmailID" minlength="4"
+                  maxlength="30" autocomplete="off" required />
+                <label>Email</label>
+              </div>
+              <div class="login-input-wrap">
+                <input type="text" name="client_reset_phone_number" class="input-field num-field"
+                  onkeypress="return onlyNumberKey(event)" minlength="10" maxlength="10" autocomplete="off" required />
+                <label>Phone</label>
+              </div>
+
+              <input type="submit" value="Forgot Password" class="sign-btn" />
+
+              <p class="text">
+                Forgotten your credentials? Contact LMS support.
+                <a href="mailto:lmsudupi22@gmail.com?subject=Account recovery" data-btn-type="forgot-password-mode"
+                  class="toggle">Get help</a> signing in
+              </p>
+            </div>
+          </form>
+        </div>
+
+
+        <div class="carousel">
+          <div class="images-wrapper">
+            <img src="./img/register_login/image1.png" class="image img-1 show" alt="" />
+            <img src="./img/register_login/image2.png" class="image img-2" alt="" />
+            <img src="./img/register_login/image3.png" class="image img-3" alt="" />
+          </div>
+
+          <div class="text-slider">
+            <div class="text-wrap">
+              <div class="text-group">
+                <h2>Switch Connect Expand</h2>
+                <h2>Digitalize your business today!</h2>
+                <h2>Collaborate with partners</h2>
+              </div>
+            </div>
+
+            <div class="bullets">
+              <span class="active" data-value="1"></span>
+              <span data-value="2"></span>
+              <span data-value="3"></span>
+            </div>
+          </div>
+        </div>
+
+        <div class="carousel-forgot-password">
+          <div class="images-wrapper">
+            <img src="./img/register_login/image4.png" class="forgot-password-image img-1 show" alt="" />
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </main>
+  <script src="./script/login_register.js"></script>
+</body>
+
+</html>
+
+<?php
+  if($_SESSION['register_status'] == "failed"){
+    echo "<script>
+      document.getElementById('signUpPage').click();
+    </script>";
+    
+
+    if($_SESSION['client_email'] == ""){
+      echo "<script>
+        document.getElementById('clientEmailID').focus();
+      </script>";
+    }
+
+    if($_SESSION['client_number'] == ""){
+      echo "<script>
+        document.getElementById('clientRegisterPassword').focus();
+      </script>";
+    }
+  } 
+
+  if($_SESSION['register_status'] == "success"){
+    echo "<script>
+      const toastElement = document.querySelector('.toast');
+      toastElement.classList.add('show')
+      setTimeout(() => toastElement.classList.remove('show'), 3000);
+      document.getElementById('clientID').focus();
+    </script>";
+  } 
+
+
+  if($_SESSION['reset_status'] == "failed"){
+    echo "<script>
+      document.getElementById('resetPage').click();
+      document.getElementById('resetEmailID').focus();
+    </script>";
+  } 
+
+
+unset($_SESSION['login_status']);
+unset($_SESSION['login_error_message']);
+
+unset($_SESSION['register_status']);
+unset($_SESSION['register_error_message']);
+unset($_SESSION['register_client_name']);
+unset($_SESSION['register_client_business_name']);
+unset($_SESSION['register_client_pincode']);
+unset($_SESSION['register_client_email']);
+unset($_SESSION['register_client_number']);
+
+unset($_SESSION['reset_status']);
+unset($_SESSION['reset_error_message']);
+
+?>

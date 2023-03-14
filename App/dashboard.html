@@ -1,0 +1,419 @@
+<?php 
+
+    session_start(); 
+
+    if(!isset($_SESSION['business_name']) or !isset($_SESSION['client_name'])){
+        header("Location: login_register.html");
+    }
+
+    if(!isset($_SESSION['client_address'])){
+        $_SESSION['client_address'] = "";
+    }
+
+    if(!isset($_SESSION['account_update_status'])){
+        $_SESSION['account_update_status'] = "";
+    }
+
+    if(!isset($_SESSION['business_update_status'])){
+        $_SESSION['business_update_status'] = "";
+    }
+
+    if(!isset($_SESSION['invalid_password'])){
+        $_SESSION['invalid_password'] = "";
+    }
+
+
+    setcookie("customer_count", $_SESSION['client_customer_count']);
+
+    setcookie("total_transaction_amount", $_SESSION['total_transaction_amount']);
+    setcookie("client_customer_count", $_SESSION['client_customer_count']);
+    setcookie("total_redemption_amount", $_SESSION['total_redemption_amount']);
+
+    setcookie("invalid_password", $_SESSION['invalid_password']);
+
+    setcookie("credit_percentage", $_SESSION['credit_percentage']);
+    setcookie("debit_percentage", $_SESSION['debit_percentage']);
+    setcookie("loyalty_coin_value", $_SESSION['loyalty_coin_value']);
+    setcookie("business_update_status", $_SESSION['business_update_status']);
+
+    setcookie("default_client_name", $_SESSION['client_name']);
+    setcookie("default_client_email", $_SESSION['client_email']);
+    setcookie("default_client_number", $_SESSION['client_number']);
+    setcookie("default_business_name", $_SESSION['business_name']);
+    setcookie("default_client_address", $_SESSION['client_address']);
+    setcookie("default_client_pincode", $_SESSION['client_pincode']);
+    setcookie("default_password", "");
+    setcookie("default_confirm_password", "");
+    setcookie("account_update_status", $_SESSION['account_update_status']);
+
+?>
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Dashboard</title>
+
+    <link rel="stylesheet" href="./style/dashboard.css">
+    <link rel="stylesheet" href="https://unicons.iconscout.com/release/v4.0.0/css/line.css">
+</head>
+
+<body>
+    <nav>
+        <div class="company-details">
+            <div class="logo-image">
+                <img src="./img/client_default_logo.png" alt="Icon">
+            </div>
+
+            <div class="company-info">
+                <span class="company-name">
+                    <?php echo $_SESSION['business_name']?>
+                </span>
+                <span class="client-name">
+                    <?php echo $_SESSION['client_name']?>
+                </span>
+            </div>
+
+        </div>
+
+        <div class="menu-items">
+            <ul class="nav-links">
+                <li class="active"><a href="#dashboard" id="dashboardPage">
+                        <i class="uil uil-estate"></i>
+                        <span class="link-name">Dashboard</span>
+                    </a></li>
+                <li><a href="#business" id="businessPage">
+                        <i class="uil uil-chart-line"></i>
+                        <span class="link-name">Business</span>
+                    </a></li>
+                <li><a href="#account" id="accountPage">
+                        <i class="uil uil-user"></i>
+                        <span class="link-name">Account</span>
+                    </a></li>
+
+            </ul>
+
+            <ul class="logout-mode">
+                <li><a href="./backend/logout.php">
+                        <i class="uil uil-signout"></i>
+                        <span class="link-name">Logout</span>
+                    </a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <section class="dashboard" id="dashboard">
+        <div class="top">
+            <i class="uil uil-bars sidebar-toggle"></i>
+        </div>
+
+        <h1 class="heading">Dashboard</h1>
+
+        <div class="dash-content">
+            <div class="overview">
+                <div class="boxes">
+                    <div class="box box1">
+                        <i class="uil uil-transaction"></i>
+                        <span class="text">Transaction Amount</span>
+                        <div class="card-display-style">
+                            <i class="uil uil-rupee-sign"></i>
+                            <span class="number total-transaction-amount">
+                                <?php echo  $_SESSION['total_transaction_amount'] ?>
+                            </span>
+                        </div>
+
+                    </div>
+                    <div class="box box2">
+                        <i class="uil uil-users-alt"></i>
+                        <span class="text">Total Customers</span>
+                        <span class="number customer-count">
+                            <?php echo $_SESSION['client_customer_count'] ?>
+                        </span>
+                    </div>
+                    <div class="box box3">
+                        <i class="uil uil-gift"></i>
+                        <span class="text">Total Redemption</span>
+                        <div class="card-display-style">
+                            <i class="uil uil-rupee-sign"></i>
+                            <span class="number total-redemption-amount">
+                                <?php echo $_SESSION['total_redemption_amount'] ?>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="controls">
+                <iframe name="myFrame" src="./backend/add_transaction.php" frameborder="0"></iframe>
+                <form action="./backend/add_transaction.php" method="post" class="sub-controls-one" target="myFrame">
+                    <div class="solid-input-box">
+                        <i class="uil uil-phone"></i>
+                        <input type="text" class="solid-input-box customer-phone-number" name="customer_phone_number"
+                            id="customerNumber" name="customer_phone_number" onkeypress="return onlyNumberKey(event)"
+                            onkeyup="getNumberInfo()" minlength="10" maxlength="10" placeholder="Customer Number"
+                            required>
+                    </div>
+                    <div class="solid-input-box">
+                        <i class="uil uil-rupee-sign"></i>
+                        <input type="text" class="solid-input-box customer-purchase-sum" name="customer_purchase_sum"
+                            placeholder="Purchase sum" onkeypress="return onlyNumberKey(event)" maxlength="10" required>
+                    </div>
+                    <div class="optionsClaim">
+                        <div class="selector">
+                            <div id="selectClaimOption">
+                                <i class="uil uil-plus-circle" id="claimTypeIcon"></i>
+                                <p id="claimType">Gain Coins</p>
+                                <i class="uil uil-angle-down"></i>
+                            </div>
+                            <ul class="claimOptionsList">
+                                <li class="claimOptions">
+                                    <i class="uil uil-plus-circle"></i>
+                                    <p>Gain Coins</p>
+                                </li>
+                                <li class="claimOptions">
+                                    <i class="uil uil-minus-circle"></i>
+                                    <p>Retrieve Coins</p>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <button type="submit" class="add-transaction-button" onclick="addTransaction();">Add</button>
+                </form>
+
+                <div class="sub-controls-two">
+                    <div class="categorySort">
+                        <div class="selector">
+                            <div id="selectCategory">
+                                <i class="uil uil-calendar-alt" id="categoryIcon"></i>
+                                <p id="sortCategory">Date</p>
+                                <i class="uil uil-angle-down"></i>
+                            </div>
+                            <ul class="categoryList">
+                                <li class="categoryOptions">
+                                    <i class="uil uil-calendar-alt"></i>
+                                    <p>Date</p>
+                                </li>
+                                <li class="categoryOptions">
+                                    <i class="uil uil-coins"></i>
+                                    <p>Coins</p>
+                                </li>
+                                <li class="categoryOptions">
+                                    <i class="uil uil-rupee-sign"></i>
+                                    <p>Amount</p>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="typeSort">
+                        <div class="selector">
+                            <div id="selectType">
+                                <i class="uil uil-sort-amount-down" id="typeIcon"></i>
+                                <p id="sortType">Descending</p>
+                                <i class="uil uil-angle-down"></i>
+                            </div>
+                            <ul class="typeList">
+                                <li class="typeOptions">
+                                    <i class="uil uil-sort-amount-up"></i>
+                                    <p>Ascending</p>
+                                </li>
+                                <li class="typeOptions">
+                                    <i class="uil uil-sort-amount-down"></i>
+                                    <p>Descending</p>
+
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="activity">
+                <div class="activity-data">
+
+                    <div id="customerTable"></div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <section class="dashboard" id="business">
+        <h1 class="heading">Business</h1>
+        <form action="./backend/update_business_info.php" method="post" class="buisness-form">
+            <fieldset class="basic-info-area">
+                <legend>Business Rules <i class="uil uil-sliders-v-alt"></i></legend>
+                <div class="conversion-page">
+                    <div class="field-row">
+                        <div class="input-wrap">
+                            <input type="text" name="loyalty_coin_value" class="input-field input-11" maxlength="3"
+                                autocomplete="off" value="<?php echo $_SESSION['loyalty_coin_value']?>" readonly
+                                onkeypress="return getDecimalInput(this, event);" required />
+                            <label>Loyalty Coin Value (₹)</label>
+                            <i class="uil uil-pen field-pen pen-11"></i>
+                        </div>
+                        <div class="input-wrap">
+                            <input type="text" name="credit_percentage" class="input-field input-12" maxlength="3"
+                                autocomplete="off" value="<?php echo $_SESSION['credit_percentage']?>" readonly
+                                onkeypress="return getDecimalInput(this, event);" required />
+                            <label>Credit Percentage (%)</label>
+                            <i class="uil uil-pen field-pen pen-12"></i>
+                        </div>
+                        <div class="input-wrap">
+                            <input type="text" name="debit_percentage" class="input-field input-13" maxlength="3"
+                                autocomplete="off" value="<?php echo $_SESSION['debit_percentage']?>" readonly
+                                onkeypress="return getDecimalInput(this, event);" required />
+                            <label>Debit Percentage (%)</label>
+                            <i class="uil uil-pen field-pen pen-13"></i>
+                        </div>
+                    </div>
+                    <div class="field-row">
+                        <div class="input-wrap">
+                            <input type="password" name="conversion_page_current_password" id="businessPagePassword"
+                                class="input-field business_current-password-field input-14" minlength="8"
+                                maxlength="14" autocomplete="off"
+                                onkeyup="isPasswordFieldEmpty(this.id, 'togglePasswordBusinessInfo')" readonly
+                                required />
+                            <label>Enter Current Password</label>
+                            <i class="uil uil-eye-slash" id="togglePasswordBusinessInfo" hidden="true"
+                                onclick="showPassword(this.id, 'businessPagePassword')"></i>
+                            <i class="uil uil-pen field-pen pen-14"></i>
+                        </div>
+                        <input type="submit" value="Save" class="save-button conversion-info-save-button">
+
+                    </div>
+                    <!-- ! <div class="display_conversion"></div> -->
+                </div>
+            </fieldset>
+        </form>
+    </section>
+
+    <section class="dashboard" id="account">
+        <h1 class="heading">Account</h1>
+        <div class="account-page">
+            <div class="account-page-top">
+                <img class="company-image" src="./img/client_default_logo.png" alt="Company Image">
+                <div class="update-image-button" onclick="document.getElementById('updateImageButton').click()">
+                    <i class="uil uil-pen image-edit-pen"></i>
+                </div>
+                <input type="file" id="updateImageButton" accept="image/*" style="display: none;">
+            </div>
+
+            <form action="./backend/update_client_info.php" method="post" class="account-form">
+                <fieldset class="basic-info-area">
+                    <legend>Basic Info <i class="uil uil-user"></i></legend>
+                    <div class="field-row">
+                        <div class="input-wrap">
+                            <input type="text" name="client_name" class="input-field input-1" minlength="4"
+                                maxlength="30" autocomplete="off" value="<?php echo $_SESSION['client_name']?>" readonly
+                                required />
+                            <label>Name</label>
+                            <i class="uil uil-pen field-pen pen-1"></i>
+                        </div>
+                        <div class="input-wrap">
+                            <input type="email" name="client_email" class="input-field input-2" id="clientEmailID"
+                                oninput="clientDataExist(this.id, 'check-email')"
+                                onkeypress="return event.charCode != 32" maxlength="30" autocomplete="off"
+                                value="<?php echo $_SESSION['client_email']?>" required />
+                            <label>Email</label>
+                            <i class="uil uil-exclamation-circle red-error-icon" id="emailExistErrorIcon"></i>
+                            <span class="error-tooltip" id="emailExistErrorLabel">This Email ID is already
+                                registered</span>
+                            <i class="uil uil-pen field-pen pen-2"></i>
+                        </div>
+                        <span id="check-email"></span>
+                    </div>
+
+                    <div class="field-row">
+                        <div class="input-wrap">
+                            <input type="text" name="client_number" class="input-field input-3" minlength="10"
+                                maxlength="10" autocomplete="off" value="<?php echo $_SESSION['client_number']?>"
+                                onkeypress="return onlyNumberKey(event)" readonly required />
+                            <label>Phone Number</label>
+                            <i class="uil uil-pen field-pen pen-3"></i>
+                        </div>
+                        <div class="input-wrap address-wrap">
+                            <input type="text" name="client_business_name" class="input-field input-4" maxlength="30"
+                                autocomplete="off" value="<?php echo $_SESSION['business_name']?>" readonly required />
+                            <label>Business Name</label>
+                            <i class="uil uil-pen field-pen pen-4"></i>
+                        </div>
+
+                    </div>
+
+                    <div class="field-row">
+                        <div class="input-wrap address-wrap">
+                            <input type="text" name="client_address" class="input-field input-5" maxlength="30"
+                                autocomplete="off" value="<?php echo $_SESSION['client_address']?>" readonly />
+                            <label>Address</label>
+                            <i class="uil uil-pen field-pen pen-5"></i>
+                        </div>
+                        <div class="input-wrap">
+                            <input type="text" name="client_pincode" class="input-field input-6" minlength="6"
+                                maxlength="6" autocomplete="off" value="<?php echo $_SESSION['client_pincode']?>"
+                                readonly required />
+                            <label>PinCode</label>
+                            <i class="uil uil-pen field-pen pen-6"></i>
+                        </div>
+                    </div>
+
+                </fieldset>
+
+                <fieldset class="security">
+                    <legend>Security <i class="uil uil-padlock"></i></legend>
+                    <div class="field-row">
+                        <div class="input-wrap">
+                            <input type="password" name="client_new_password" class="input-field input-7" minlength="8"
+                                id="accountInfoNewPassword" maxlength="14" autocomplete="off"
+                                onkeyup="return checkPasswordStrength(this.id, 'togglePasswordAccountInfo')" readonly />
+                            <label>New Password</label>
+                            <span id="passwordStrengthLabel" class="password-strength-label"></span>
+                            <i class="uil uil-eye-slash" id="togglePasswordAccountInfo" hidden="true"
+                                onclick="showPassword(this.id, 'accountInfoNewPassword')"></i>
+                            <i class="uil uil-pen field-pen pen-7"></i>
+                        </div>
+                        <div class="input-wrap">
+                            <input type="password" name="client_new_password_confirm" class="input-field input-8"
+                                minlength="8" maxlength="14" onkeyup="return confirmEnteredPassword()"
+                                id="accountInfoConfirmPassword" autocomplete="off" readonly />
+                            <label>Confirm Password</label>
+                            <i class="uil uil-exclamation-circle red-error-icon" id="confirmPasswordErrorIcon"></i>
+                            <span class="error-tooltip" id="confirmPasswordErrorLabel">Password didn't match</span>
+                            <i class="uil uil-pen field-pen pen-8"></i>
+                        </div>
+                </fieldset>
+
+                <fieldset class="security">
+                    <legend>Save Changes <i class="uil uil-save"></i></legend>
+                    <div class="field-row">
+                        <div class="input-wrap">
+                            <input type="password" name="current_password"
+                                class="input-field account_current-password-field input-9"
+                                id="accountPageCurrentPassword" minlength="8" maxlength="14" autocomplete="off"
+                                onkeyup="isPasswordFieldEmpty(this.id, 'togglePasswordCurrentAccountInfo')" readonly
+                                required />
+                            <label>Enter Current Password</label>
+                            <i class="uil uil-eye-slash" id="togglePasswordCurrentAccountInfo" hidden="true"
+                                onclick="showPassword(this.id, 'accountPageCurrentPassword')"></i>
+                            <i class="uil uil-pen field-pen pen-9"></i>
+                        </div>
+                        <input type="submit" value="Save" class="account-info-save-button save-button">
+                </fieldset>
+            </form>
+
+        </div>
+    </section>
+
+    <span id="snackbar"></span>
+    <script src="./script/dashboard.js"></script>
+</body>
+
+</html>
+
+<?php
+
+    unset($_SESSION['account_update_status']);
+    unset($_SESSION['business_update_status']);
+    unset($_SESSION['invalid_password']);
+
+?>
