@@ -11,10 +11,10 @@ Loyalty Bridge is a web-based loyalty management system that enables businesses 
 
 ## Installation
 * Clone the repository to your local machine.
-* Run CT.php in your local server.
-* Start the application with index.
 * Run the server application
 * Navigate to http://localhost in your web browser.
+* Run CT.php in your local server.
+* Start the application with index.
 
 ## Usage
 Once the application is installed and running, businesses can use Loyalty Bridge to track customer loyalty, incentivize repeat business, and manage discount programs. Customers can earn loyalty coins for each purchase, which can then be redeemed for discounts on future purchases.
